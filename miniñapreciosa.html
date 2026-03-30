@@ -232,7 +232,7 @@
             if (event.data == YT.PlayerState.PLAYING) {
                 let checkTime = setInterval(() => {
                     let currentTime = player.getCurrentTime();
-                    if (currentTime >= 63) { // 1:03
+                    if (currentTime >= 141) { // 1:03
                         player.pauseVideo();
                         musicStopped = true;
                         clearInterval(checkTime);
