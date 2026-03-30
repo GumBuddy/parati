@@ -67,14 +67,6 @@
             font-weight: bold;
         }
 
-        #video-container {
-            position: fixed;
-            top: -100px;
-            left: -100px;
-            width: 1px;
-            height: 1px;
-        }
-
         #canvas { position: fixed; top: 0; left: 0; z-index: -1; }
 
         .container {
@@ -139,9 +131,7 @@
         <button id="start-btn">Entrar al Refugio</button>
     </div>
 
-    <div id="video-container">
-        <div id="player"></div>
-    </div>
+    <audio id="bg-audio" src="sound.mp3"></audio>
 
     <canvas id="canvas"></canvas>
 
@@ -184,14 +174,14 @@
         </div>
 
         <div class="stanza sacrifice-verse">
-            <span>Me dolerá imaginarte buscando otros brazos,</span>
+            <span>Me dolerá imaginarte buscando otros abrazos,</span>
             <span>pero respetaré tu paso si él te ofrece su abrigo;</span>
-            <span>acéptalo solo si ríe de tus chistes,</span>
+            <span>acéptalo solo si ríe de tus chistes conmigo,</span>
             <span>y si escucha tu sueño hasta unir los pedazos.</span><br>
             <span>Si cumple tus caprichos y antojos de comida,</span>
             <span>si te cuida en la sombra como yo te cuidé...</span>
             <span>la envidia me comerá, pero feliz te veré,</span>
-            <span>porque tu bienestar es el anhelo de mi vida.</span>
+            <span>porque tu bienestar es el norte de mi vida.</span>
         </div>
 
         <div class="stanza" style="border-top: 1px solid var(--accent-color); padding-top: 80px; color: var(--accent-color);">
@@ -201,60 +191,33 @@
             <span>esperando el momento en que el destino te traiga.</span>
         </div>
 
-        <footer id="final-footer">~ "I M U" ALE ~</footer>
+        <footer id="final-footer">~ LA PUERTA SIGUE ABIERTA ~</footer>
     </div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let player;
-        let musicStopped = false;
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '0',
-                width: '0',
-                videoId: 'FoCG-WNsZio',
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 0,
-                    'disablekb': 1,
-                    'rel': 0,
-                    'enablejsapi': 1
-                },
-                events: {
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-
-        function onPlayerStateChange(event) {
-            // Monitor de tiempo para detener en 1:03 (63 segundos)
-            if (event.data == YT.PlayerState.PLAYING) {
-                let checkTime = setInterval(() => {
-                    let currentTime = player.getCurrentTime();
-                    if (currentTime >= 141) { // 1:03
-                        player.pauseVideo();
-                        musicStopped = true;
-                        clearInterval(checkTime);
-                    }
-                }, 500);
-            }
-        }
-
+        const audio = document.getElementById('bg-audio');
         const startBtn = document.getElementById('start-btn');
         const overlay = document.getElementById('overlay');
         const content = document.getElementById('main-content');
 
         startBtn.addEventListener('click', () => {
-            if (player && player.playVideo) {
-                player.playVideo();
-            }
+            // Reproducir audio local
+            audio.play();
+            
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
                 content.style.display = 'block';
                 startExperience();
             }, 1500);
+        });
+
+        // Monitor para detener el audio en 2:21 (141 segundos)
+        audio.addEventListener('timeupdate', () => {
+            if (audio.currentTime >= 141) {
+                audio.pause();
+                audio.currentTime = 141; // Mantener en ese punto
+            }
         });
 
         function startExperience() {
@@ -271,10 +234,10 @@
 
             document.querySelectorAll('.stanza span, h1, footer').forEach(el => observer.observe(el));
 
-            // Scroll automático (independiente de la música)
+            // Scroll automático independiente
             let scrollY = 0;
             function step() {
-                scrollY += 0.45;
+                scrollY += 0.42; // Velocidad ligeramente ajustada para la nueva duración
                 window.scrollTo(0, scrollY);
                 if (scrollY < (document.body.scrollHeight - window.innerHeight)) {
                     requestAnimationFrame(step);
@@ -283,7 +246,7 @@
             setTimeout(step, 4000);
         }
 
-        // Estrellas de fondo
+        // Estrellas de fondo con brillo morado
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
@@ -292,13 +255,13 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             stars = [];
-            for(let i=0; i<60; i++) {
+            for(let i=0; i<65; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    r: Math.random() * 1.5 + 0.5,
-                    vx: (Math.random() - 0.5) * 0.3,
-                    vy: (Math.random() - 0.5) * 0.3
+                    r: Math.random() * 1.5 + 0.6,
+                    vx: (Math.random() - 0.5) * 0.2,
+                    vy: (Math.random() - 0.5) * 0.2
                 });
             }
         }
