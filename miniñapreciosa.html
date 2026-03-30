@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>La Paz de tu Respiración</title>
+    <title>El Refugio de Nuestro Silencio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #04050a;
-            --text-color: #e2e8f0;
-            --accent-color: #a78bfa; /* Púrpura suave, nocturno */
-            --glow-color: rgba(167, 139, 250, 0.3);
+            --bg-color: #030408;
+            --text-color: #f1f5f9;
+            --accent-color: #c084fc; 
+            --glow-color: rgba(192, 132, 252, 0.2);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -17,87 +18,142 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Playfair Display', serif; /* Fuente más elegante y poética */
+            font-family: 'Inter', sans-serif;
             margin: 0; padding: 0;
             overflow-x: hidden;
             line-height: 1.8;
-            font-weight: 300;
+        }
+
+        /* Pantalla de Inicio (Overlay) */
+        #overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--bg-color);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.5s ease;
+        }
+
+        #start-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 15px 30px;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        #start-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 0 20px var(--glow-color);
         }
 
         #canvas {
             position: fixed;
             top: 0; left: 0;
             z-index: -1;
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
         .container {
             width: 100%;
             max-width: 650px;
             margin: 0 auto;
-            padding: 120px 30px;
+            padding: 60px 25px;
             text-align: center;
+            display: none; /* Se muestra al dar click */
+        }
+
+        .intro-box {
+            font-style: italic;
+            color: var(--accent-color);
+            border-left: 2px solid var(--accent-color);
+            padding: 20px;
+            margin-bottom: 80px;
+            font-size: 1.1rem;
+            text-align: left;
+            background: rgba(192, 132, 252, 0.05);
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 2s ease;
         }
 
         h1 {
-            font-size: clamp(1.8rem, 7vw, 2.6rem);
-            margin-bottom: 90px;
-            color: var(--accent-color);
-            letter-spacing: 3px;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 8vw, 2.8rem);
+            margin-bottom: 60px;
+            color: #fff;
             opacity: 0;
-            transform: scale(0.95);
-            transition: all 2.5s ease;
-            text-shadow: 0 0 15px var(--glow-color);
+            transition: 3s ease;
         }
-
-        h1.visible { opacity: 1; transform: scale(1); }
 
         .stanza {
-            margin-bottom: 75px;
+            margin-bottom: 80px;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px);
             transition: all 1.5s ease-out;
-            font-size: clamp(1.05rem, 4.8vw, 1.25rem);
+            font-size: clamp(1.05rem, 4.8vw, 1.2rem);
         }
 
-        .stanza.visible { opacity: 1; transform: translateY(0); }
+        .visible { opacity: 1 !important; transform: translate(0) !important; }
 
-        .highlight-intimacy {
-            color: #fff;
-            font-style: italic;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-        }
-
-        .digital-bond {
-            background: rgba(167, 139, 250, 0.05);
-            border-top: 1px solid var(--accent-color);
-            border-bottom: 1px solid var(--accent-color);
-            padding: 40px 20px;
-            margin: 50px 0;
-            border-radius: 8px;
+        .highlight-voice {
+            color: var(--accent-color);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
         }
 
         footer {
             margin-top: 50px;
-            font-size: 0.8rem;
-            opacity: 0.3;
+            font-size: 0.7rem;
+            opacity: 0.4;
             letter-spacing: 4px;
             text-transform: uppercase;
+            padding-bottom: 40px;
         }
     </style>
 </head>
 <body>
 
+    <div id="overlay">
+        <p style="margin-bottom: 20px; font-weight: 200; letter-spacing: 1px;">Sube el volumen y pulsa para leer</p>
+        <button id="start-btn">Entrar al Refugio</button>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="https://www.chosic.com/wp-content/uploads/2021/07/The-Wait-Piano-Music.mp3" type="audio/mpeg">
+    </audio>
+
     <canvas id="canvas"></canvas>
 
-    <div class="container">
-        <h1 id="title">El Silencio Compartido</h1>
+    <div class="container" id="main-content">
+        
+        <div class="intro-box" id="intro-text">
+            "Esto es lo que guardo en el pecho. No me marcho por falta de amor ni por deseo propio, sino porque respeto tu espacio y tu petición. Pero quiero que sepas que no pongo llave a este refugio; si algún día decides que el tiempo es propicio, mi puerta sigue abierta para ti, te esperaré."
+        </div>
+
+        <h1>El Guardián de tu Ausencia</h1>
 
         <div class="stanza">
-            Entiendo tus horas de prisa y tu desapego,<br>
-            ese mundo ocupado que a veces nos separa;<br>
-            pues nada en la tierra se le comparara<br>
-            a la luz que me daba sentir tu sosiego.
+            Me sumerjo en el silencio para cuidar tu calma,<br>
+            guardando las palabras que tu voz hoy me calla;<br>
+            llevo nuestra promesa como una antigua medalla,<br>
+            protegiendo del tiempo lo que aún quema en el alma.
+        </div>
+
+        <div class="stanza">
+            Entiendo tus silencios y tus horas de prisa,<br>
+            ese desapego que a veces nos separa;<br>
+            pues nada hay en el mundo que se le comparara<br>
+            a la luz que me daba sentir tu sonrisa.
         </div>
 
         <div class="stanza">
@@ -107,7 +163,7 @@
             sabiendo que, al fin, te tendría presente.
         </div>
 
-        <div class="stanza digital-bond">
+        <div class="stanza">
             Tu mensaje llegando era mi alegría diaria,<br>
             el pulso que encendía mis días más grises;<br>
             hacías con tu voz que me sintiera libre,<br>
@@ -115,63 +171,78 @@
         </div>
 
         <div class="stanza">
-            Pero escucharte cantar era tocar el cielo,<br>
+            <span class="highlight-voice">Escucharte cantar era tocar el cielo,</span><br>
             tu tono de voz desarmaba mi calma;<br>
             cada nota subía directo hasta mi alma,<br>
             borrando la distancia y alzándome en vuelo.
         </div>
 
-        <div class="stanza highlight-intimacy">
-            Y entre todas las cosas, la más bonita y pura,<br>
+        <div class="stanza">
+            Y entre todas las cosas, la más dulce y pura,<br>
             era un viernes por la noche, tras la larga jornada,<br>
             quedarnos en silencio, con la luz apagada,<br>
-            y escucharte dormir... mi mayor dulzura.
+            y escucharte dormir... mi mayor fortuna.
         </div>
 
-        <div class="stanza highlight-intimacy">
+        <div class="stanza">
             Tu respiración suave, rítmica y callada,<br>
             era el puente invisible que nos unía al fin;<br>
             velar tu sueño dulce en mi propio confín,<br>
             la prueba de que mi alma te tiene guardada.
         </div>
 
-        <div class="stanza" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 40px; color: var(--accent-color); font-weight: bold;">
+        <div class="stanza" style="border-top: 1px solid var(--accent-color); padding-top: 40px; color: var(--accent-color); font-weight: bold;">
             Y si el futuro, por fin, nos permite el encuentro,<br>
             estoy seguro de que todo saldrá bien;<br>
             seremos la gloria, la calma y el edén,<br>
-            y este amor sin pantallas nacerá desde dentro.
+            y este amor sin distancias... nacerá desde dentro.
         </div>
 
-        <footer>~ Unidos en el sueño ~</footer>
+        <footer>~ La puerta sigue abierta ~</footer>
     </div>
 
     <script>
+        const startBtn = document.getElementById('start-btn');
+        const overlay = document.getElementById('overlay');
+        const music = document.getElementById('bg-music');
+        const container = document.getElementById('main-content');
+
+        startBtn.addEventListener('click', () => {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                container.style.display = 'block';
+                music.play();
+                // Activar animaciones de entrada
+                document.getElementById('intro-text').classList.add('visible');
+                document.querySelector('h1').classList.add('visible');
+            }, 1500);
+        });
+
+        // Intersection Observer para las estrofas
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('visible');
             });
-        }, { threshold: 0.15 });
+        }, { threshold: 0.2 });
 
-        document.querySelectorAll('.stanza, h1').forEach(el => observer.observe(el));
+        document.querySelectorAll('.stanza').forEach(el => observer.observe(el));
 
+        // Fondo de red digital suave
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        let width, height, dots = [];
+        let points = [];
 
         function init() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-            dots = [];
-            for(let i=0; i<70; i++) {
-                dots.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    r: Math.random() * 1.5,
-                    vx: (Math.random() - 0.5) * 0.3,
-                    vy: (Math.random() - 0.5) * 0.3,
-                    o: Math.random()
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            points = [];
+            for(let i=0; i<50; i++) {
+                points.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4
                 });
             }
         }
@@ -179,35 +250,32 @@
         window.addEventListener('resize', init);
         init();
 
-        function animate() {
-            ctx.clearRect(0,0,width,height);
-            ctx.fillStyle = "rgba(167, 139, 250, 0.6)";
-            ctx.strokeStyle = "rgba(167, 139, 250, 0.1)";
-
-            dots.forEach((d, i) => {
-                d.x += d.vx;
-                d.y += d.vy;
-                if(d.x < 0 || d.x > width) d.vx *= -1;
-                if(d.y < 0 || d.y > height) d.vy *= -1;
-
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(192, 132, 252, 0.5)";
+            ctx.strokeStyle = "rgba(192, 132, 252, 0.1)";
+            
+            points.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x<0 || p.x>canvas.width) p.vx *= -1;
+                if(p.y<0 || p.y>canvas.height) p.vy *= -1;
                 ctx.beginPath();
-                ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+                ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2);
                 ctx.fill();
 
-                for(let j=i+1; j<dots.length; j++) {
-                    let d2 = dots[j];
-                    let dist = Math.hypot(d.x - d2.x, d.y - d2.y);
-                    if(dist < 100) {
+                for(let j=i+1; j<points.length; j++) {
+                    let p2 = points[j];
+                    let d = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if(d < 150) {
                         ctx.beginPath();
-                        ctx.moveTo(d.x, d.y);
-                        ctx.lineTo(d2.x, d2.y);
+                        ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
                         ctx.stroke();
                     }
                 }
             });
-            requestAnimationFrame(animate);
+            requestAnimationFrame(draw);
         }
-        animate();
+        draw();
     </script>
 </body>
 </html>
