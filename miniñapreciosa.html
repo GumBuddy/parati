@@ -10,7 +10,6 @@
             --bg-color: #030408;
             --text-color: #f1f5f9;
             --accent-color: #c084fc; 
-            --glow-color: rgba(192, 132, 252, 0.4);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -37,8 +36,7 @@
             align-items: center;
             text-align: center;
             padding: 40px;
-            transition: opacity 2s ease;
-            overflow-y: auto;
+            transition: opacity 1.5s ease;
         }
 
         .intro-text-wrapper {
@@ -53,7 +51,7 @@
 
         .intro-message {
             font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             line-height: 1.8;
         }
 
@@ -67,16 +65,18 @@
             cursor: pointer;
             text-transform: uppercase;
             border-radius: 50px;
-            transition: 0.4s;
             font-weight: bold;
         }
 
-        #start-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 15px var(--glow-color); }
+        /* Iframe para música - Visible pero fuera de vista */
+        #video-container {
+            position: fixed;
+            top: -100px;
+            left: -100px;
+            width: 1px;
+            height: 1px;
+        }
 
-        /* Reproductor invisible pero activo */
-        #player-wrapper { position: fixed; top: -500px; left: -500px; width: 1px; height: 1px; pointer-events: none; }
-
-        /* Fondo de Estrellas/Partículas */
         #canvas { position: fixed; top: 0; left: 0; z-index: -1; }
 
         .container {
@@ -90,44 +90,42 @@
 
         h1 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(2rem, 9vw, 3rem);
-            margin-bottom: 180px;
+            font-size: clamp(2rem, 9vw, 2.8rem);
+            margin-bottom: 150px;
             color: #fff;
-            opacity: 0;
-            transition: 3s ease;
         }
 
-        .stanza { margin-bottom: 220px; }
+        .stanza { margin-bottom: 200px; }
 
-        /* Estilo para que las frases aparezcan suavemente */
+        /* Efecto de frases suaves */
         .stanza span {
             display: block;
             opacity: 0;
             transform: translateY(20px);
-            transition: all 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 2.2s ease-out;
             margin-bottom: 25px;
-            font-size: clamp(1.2rem, 5.5vw, 1.45rem);
+            font-size: clamp(1.15rem, 5vw, 1.35rem);
         }
 
         .revealed { opacity: 1 !important; transform: translateY(0) !important; }
 
         .sacrifice-verse {
             border: 1px solid rgba(192, 132, 252, 0.3);
-            padding: 50px 25px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.03);
+            padding: 40px 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.02);
         }
 
-        .highlight { color: var(--accent-color); font-weight: 400; }
+        .highlight { color: var(--accent-color); }
 
         footer {
             margin-top: 200px;
             font-size: 0.8rem;
-            opacity: 0;
-            letter-spacing: 6px;
+            letter-spacing: 5px;
             color: var(--accent-color);
             font-weight: bold;
-            transition: opacity 3s;
+            opacity: 0;
+            transition: opacity 2s;
         }
     </style>
 </head>
@@ -144,14 +142,17 @@
         <button id="start-btn">Entrar al Refugio</button>
     </div>
 
-    <div id="player-wrapper">
-        <div id="player"></div>
+    <div id="video-container">
+        <iframe id="youtube-player" 
+                src="https://www.youtube.com/embed/FoCG-WNsZio?enablejsapi=1&controls=0&disablekb=1&rel=0" 
+                frameborder="0" 
+                allow="autoplay"></iframe>
     </div>
 
     <canvas id="canvas"></canvas>
 
     <div class="container" id="main-content">
-        <h1 id="title">El Guardián de tu Ausencia</h1>
+        <h1>El Guardián de tu Ausencia</h1>
 
         <div class="stanza">
             <span>Me sumerjo en el silencio para cuidar tu calma,</span>
@@ -199,53 +200,45 @@
             <span>porque tu bienestar es el norte de mi vida.</span>
         </div>
 
-        <div class="stanza" id="final-verse" style="border-top: 1px solid var(--accent-color); padding-top: 80px; color: var(--accent-color);">
+        <div class="stanza" style="border-top: 1px solid var(--accent-color); padding-top: 80px; color: var(--accent-color);">
             <span>Pero si decides que nuestro mundo se detenga,</span>
             <span>y que este instante se quede para siempre con nosotros,</span>
             <span>aquí estaré yo, sin buscar otros rostros,</span>
             <span>esperando el momento en que el destino te traiga.</span>
         </div>
 
-        <footer id="footer-trigger">~ LA PUERTA SIGUE ABIERTA ~</footer>
+        <footer id="final-footer">~ LA PUERTA SIGUE ABIERTA ~</footer>
     </div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        var player;
-        var musicStopped = false;
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '0', width: '0',
-                videoId: 'FoCG-WNsZio',
-                playerVars: { 'autoplay': 0, 'controls': 0, 'showinfo': 0, 'loop': 1, 'playlist': 'FoCG-WNsZio' },
-                events: { 'onReady': function(event) { event.target.setVolume(100); } }
-            });
-        }
-
         const startBtn = document.getElementById('start-btn');
         const overlay = document.getElementById('overlay');
-        const container = document.getElementById('main-content');
+        const content = document.getElementById('main-content');
+        const player = document.getElementById('youtube-player');
+        let musicStopped = false;
 
         startBtn.addEventListener('click', () => {
-            if(player && player.playVideo) player.playVideo();
+            // Comando directo para móviles
+            player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
-                container.style.display = 'block';
-                document.getElementById('title').classList.add('visible');
-                initExperience();
-            }, 2000);
+                content.style.display = 'block';
+                startExperience();
+            }, 1500);
         });
 
-        function initExperience() {
-            // Observer para aparición suave de frases
+        function startExperience() {
+            // Observer para las frases
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('revealed');
-                        if (entry.target.id === 'footer-trigger' && !musicStopped) {
-                            if(player && player.pauseVideo) player.pauseVideo();
+                        
+                        // Detener música al llegar al footer
+                        if (entry.target.id === 'final-footer' && !musicStopped) {
+                            player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                             musicStopped = true;
                             entry.target.style.opacity = "1";
                         }
@@ -253,68 +246,55 @@
                 });
             }, { threshold: 0.1 });
 
-            document.querySelectorAll('.stanza span, #title, footer').forEach(el => observer.observe(el));
+            document.querySelectorAll('.stanza span, h1, footer').forEach(el => observer.observe(el));
 
             // Scroll automático
-            let scrollPos = 0;
-            function autoScroll() {
+            let scrollY = 0;
+            function step() {
                 if (musicStopped) return;
-                scrollPos += 0.45; 
-                window.scrollTo(0, scrollPos);
-                requestAnimationFrame(autoScroll);
+                scrollY += 0.45;
+                window.scrollTo(0, scrollY);
+                requestAnimationFrame(step);
             }
-            setTimeout(autoScroll, 4000);
+            setTimeout(step, 4000);
         }
 
-        // Canvas de Estrellas Mejorado
+        // Estrellas de fondo
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        let points = [];
+        let stars = [];
 
-        function initCanvas() {
+        function init() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            points = [];
-            for(let i=0; i<60; i++) { // Más estrellas
-                points.push({
-                    x: Math.random()*canvas.width,
-                    y: Math.random()*canvas.height,
-                    vx: (Math.random()-0.5)*0.3,
-                    vy: (Math.random()-0.5)*0.3,
-                    r: Math.random()*1.8 + 0.5 // Estrellas más visibles
+            stars = [];
+            for(let i=0; i<60; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 1.5 + 0.5,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3
                 });
             }
         }
+        window.addEventListener('resize', init);
+        init();
 
-        window.addEventListener('resize', initCanvas);
-        initCanvas();
-
-        function draw() {
+        function animate() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            points.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy;
-                if(p.x<0 || p.x>canvas.width) p.vx*=-1;
-                if(p.y<0 || p.y>canvas.height) p.vy*=-1;
-                
+            ctx.fillStyle = "rgba(192, 132, 252, 0.8)";
+            stars.forEach(s => {
+                s.x += s.vx; s.y += s.vy;
+                if(s.x < 0 || s.x > canvas.width) s.vx *= -1;
+                if(s.y < 0 || s.y > canvas.height) s.vy *= -1;
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-                ctx.fillStyle = "rgba(192, 132, 252, 0.7)"; // Morado más brillante
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
                 ctx.fill();
-
-                for(let j=i+1; j<points.length; j++){
-                    let d = Math.hypot(p.x-points[j].x, p.y-points[j].y);
-                    if(d<150){
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(points[j].x, points[j].y);
-                        ctx.strokeStyle = "rgba(192, 132, 252, 0.15)";
-                        ctx.stroke();
-                    }
-                }
             });
-            requestAnimationFrame(draw);
+            requestAnimationFrame(animate);
         }
-        draw();
+        animate();
     </script>
 </body>
 </html>
