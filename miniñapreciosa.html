@@ -23,7 +23,6 @@
             line-height: 2.2;
         }
 
-        /* Pantalla de Inicio */
         #overlay {
             position: fixed;
             top: 0; left: 0;
@@ -36,7 +35,7 @@
             align-items: center;
             text-align: center;
             padding: 40px;
-            transition: opacity 1.5s ease;
+            transition: opacity 2s ease;
         }
 
         .intro-text-wrapper {
@@ -68,7 +67,6 @@
             font-weight: bold;
         }
 
-        /* Iframe para música - Visible pero fuera de vista */
         #video-container {
             position: fixed;
             top: -100px;
@@ -97,7 +95,6 @@
 
         .stanza { margin-bottom: 200px; }
 
-        /* Efecto de frases suaves */
         .stanza span {
             display: block;
             opacity: 0;
@@ -143,10 +140,7 @@
     </div>
 
     <div id="video-container">
-        <iframe id="youtube-player" 
-                src="https://www.youtube.com/embed/FoCG-WNsZio?enablejsapi=1&controls=0&disablekb=1&rel=0" 
-                frameborder="0" 
-                allow="autoplay"></iframe>
+        <div id="player"></div>
     </div>
 
     <canvas id="canvas"></canvas>
@@ -190,14 +184,14 @@
         </div>
 
         <div class="stanza sacrifice-verse">
-            <span>Me dolerá imaginarte buscando otros abrazos,</span>
+            <span>Me dolerá imaginarte buscando otros brazos,</span>
             <span>pero respetaré tu paso si él te ofrece su abrigo;</span>
-            <span>acéptalo solo si ríe de tus chistes conmigo,</span>
+            <span>acéptalo solo si ríe de tus chistes,</span>
             <span>y si escucha tu sueño hasta unir los pedazos.</span><br>
             <span>Si cumple tus caprichos y antojos de comida,</span>
             <span>si te cuida en la sombra como yo te cuidé...</span>
             <span>la envidia me comerá, pero feliz te veré,</span>
-            <span>porque tu bienestar es el norte de mi vida.</span>
+            <span>porque tu bienestar es el anhelo de mi vida.</span>
         </div>
 
         <div class="stanza" style="border-top: 1px solid var(--accent-color); padding-top: 80px; color: var(--accent-color);">
@@ -207,20 +201,54 @@
             <span>esperando el momento en que el destino te traiga.</span>
         </div>
 
-        <footer id="final-footer">~ LA PUERTA SIGUE ABIERTA ~</footer>
+        <footer id="final-footer">~ "I M U" ALE ~</footer>
     </div>
 
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+        let player;
+        let musicStopped = false;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '0',
+                width: '0',
+                videoId: 'FoCG-WNsZio',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'rel': 0,
+                    'enablejsapi': 1
+                },
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            // Monitor de tiempo para detener en 1:03 (63 segundos)
+            if (event.data == YT.PlayerState.PLAYING) {
+                let checkTime = setInterval(() => {
+                    let currentTime = player.getCurrentTime();
+                    if (currentTime >= 63) { // 1:03
+                        player.pauseVideo();
+                        musicStopped = true;
+                        clearInterval(checkTime);
+                    }
+                }, 500);
+            }
+        }
+
         const startBtn = document.getElementById('start-btn');
         const overlay = document.getElementById('overlay');
         const content = document.getElementById('main-content');
-        const player = document.getElementById('youtube-player');
-        let musicStopped = false;
 
         startBtn.addEventListener('click', () => {
-            // Comando directo para móviles
-            player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-            
+            if (player && player.playVideo) {
+                player.playVideo();
+            }
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
@@ -230,16 +258,11 @@
         });
 
         function startExperience() {
-            // Observer para las frases
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('revealed');
-                        
-                        // Detener música al llegar al footer
-                        if (entry.target.id === 'final-footer' && !musicStopped) {
-                            player.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                            musicStopped = true;
+                        if (entry.target.id === 'final-footer') {
                             entry.target.style.opacity = "1";
                         }
                     }
@@ -248,13 +271,14 @@
 
             document.querySelectorAll('.stanza span, h1, footer').forEach(el => observer.observe(el));
 
-            // Scroll automático
+            // Scroll automático (independiente de la música)
             let scrollY = 0;
             function step() {
-                if (musicStopped) return;
                 scrollY += 0.45;
                 window.scrollTo(0, scrollY);
-                requestAnimationFrame(step);
+                if (scrollY < (document.body.scrollHeight - window.innerHeight)) {
+                    requestAnimationFrame(step);
+                }
             }
             setTimeout(step, 4000);
         }
@@ -283,7 +307,7 @@
 
         function animate() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "rgba(192, 132, 252, 0.8)";
+            ctx.fillStyle = "rgba(192, 132, 252, 0.9)";
             stars.forEach(s => {
                 s.x += s.vx; s.y += s.vy;
                 if(s.x < 0 || s.x > canvas.width) s.vx *= -1;
