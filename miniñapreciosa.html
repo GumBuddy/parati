@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>La Paz de tu Respiración</title>
+    <style>
+        :root {
+            --bg-color: #04050a;
+            --text-color: #e2e8f0;
+            --accent-color: #a78bfa; /* Púrpura suave, nocturno */
+            --glow-color: rgba(167, 139, 250, 0.3);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Playfair Display', serif; /* Fuente más elegante y poética */
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 120px 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 7vw, 2.6rem);
+            margin-bottom: 90px;
+            color: var(--accent-color);
+            letter-spacing: 3px;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 2.5s ease;
+            text-shadow: 0 0 15px var(--glow-color);
+        }
+
+        h1.visible { opacity: 1; transform: scale(1); }
+
+        .stanza {
+            margin-bottom: 75px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1.5s ease-out;
+            font-size: clamp(1.05rem, 4.8vw, 1.25rem);
+        }
+
+        .stanza.visible { opacity: 1; transform: translateY(0); }
+
+        .highlight-intimacy {
+            color: #fff;
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        .digital-bond {
+            background: rgba(167, 139, 250, 0.05);
+            border-top: 1px solid var(--accent-color);
+            border-bottom: 1px solid var(--accent-color);
+            padding: 40px 20px;
+            margin: 50px 0;
+            border-radius: 8px;
+        }
+
+        footer {
+            margin-top: 50px;
+            font-size: 0.8rem;
+            opacity: 0.3;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="container">
+        <h1 id="title">El Silencio Compartido</h1>
+
+        <div class="stanza">
+            Entiendo tus horas de prisa y tu desapego,<br>
+            ese mundo ocupado que a veces nos separa;<br>
+            pues nada en la tierra se le comparara<br>
+            a la luz que me daba sentir tu sosiego.
+        </div>
+
+        <div class="stanza">
+            Valía cada instante de mi espera paciente,<br>
+            aguardar esa llamada al alba o por la tarde;<br>
+            mi motor era el brillo que en la pantalla arde,<br>
+            sabiendo que, al fin, te tendría presente.
+        </div>
+
+        <div class="stanza digital-bond">
+            Tu mensaje llegando era mi alegría diaria,<br>
+            el pulso que encendía mis días más grises;<br>
+            hacías con tu voz que me sintiera libre,<br>
+            rompiendo con palabras mi fe solitaria.
+        </div>
+
+        <div class="stanza">
+            Pero escucharte cantar era tocar el cielo,<br>
+            tu tono de voz desarmaba mi calma;<br>
+            cada nota subía directo hasta mi alma,<br>
+            borrando la distancia y alzándome en vuelo.
+        </div>
+
+        <div class="stanza highlight-intimacy">
+            Y entre todas las cosas, la más bonita y pura,<br>
+            era un viernes por la noche, tras la larga jornada,<br>
+            quedarnos en silencio, con la luz apagada,<br>
+            y escucharte dormir... mi mayor dulzura.
+        </div>
+
+        <div class="stanza highlight-intimacy">
+            Tu respiración suave, rítmica y callada,<br>
+            era el puente invisible que nos unía al fin;<br>
+            velar tu sueño dulce en mi propio confín,<br>
+            la prueba de que mi alma te tiene guardada.
+        </div>
+
+        <div class="stanza" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 40px; color: var(--accent-color); font-weight: bold;">
+            Y si el futuro, por fin, nos permite el encuentro,<br>
+            estoy seguro de que todo saldrá bien;<br>
+            seremos la gloria, la calma y el edén,<br>
+            y este amor sin pantallas nacerá desde dentro.
+        </div>
+
+        <footer>~ Unidos en el sueño ~</footer>
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.stanza, h1').forEach(el => observer.observe(el));
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, dots = [];
+
+        function init() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            dots = [];
+            for(let i=0; i<70; i++) {
+                dots.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    r: Math.random() * 1.5,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    o: Math.random()
+                });
+            }
+        }
+
+        window.addEventListener('resize', init);
+        init();
+
+        function animate() {
+            ctx.clearRect(0,0,width,height);
+            ctx.fillStyle = "rgba(167, 139, 250, 0.6)";
+            ctx.strokeStyle = "rgba(167, 139, 250, 0.1)";
+
+            dots.forEach((d, i) => {
+                d.x += d.vx;
+                d.y += d.vy;
+                if(d.x < 0 || d.x > width) d.vx *= -1;
+                if(d.y < 0 || d.y > height) d.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+                ctx.fill();
+
+                for(let j=i+1; j<dots.length; j++) {
+                    let d2 = dots[j];
+                    let dist = Math.hypot(d.x - d2.x, d.y - d2.y);
+                    if(dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(d.x, d.y);
+                        ctx.lineTo(d2.x, d2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
