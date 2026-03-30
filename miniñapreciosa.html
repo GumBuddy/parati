@@ -21,7 +21,7 @@
             font-family: 'Inter', sans-serif;
             margin: 0; padding: 0;
             overflow-x: hidden;
-            line-height: 2;
+            line-height: 2.2;
         }
 
         /* Pantalla de Inicio - REFORZADA */
@@ -36,47 +36,55 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 30px;
-            transition: opacity 1.5s ease;
+            padding: 40px;
+            transition: opacity 2s ease;
+            overflow-y: auto; /* Permite scroll si el texto es largo en pantallas pequeñas */
         }
 
-        .intro-text-start {
+        .intro-text-wrapper {
+            max-width: 550px;
+            margin-bottom: 40px;
+            text-align: left;
+            border-left: 2px solid var(--accent-color);
+            padding-left: 25px;
+        }
+
+        .intro-dedication {
+            font-family: 'Playfair Display', serif;
+            color: #fff;
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .intro-core-message {
             font-style: italic;
             color: var(--accent-color);
-            max-width: 500px;
-            margin-bottom: 40px;
             font-size: 1.1rem;
-            line-height: 1.6;
-            border-left: 2px solid var(--accent-color);
-            padding-left: 15px;
-            text-align: left;
+            line-height: 1.8;
+            opacity: 1;
         }
 
         #start-btn {
-            background: var(--accent-color);
-            border: none;
-            color: white;
-            padding: 18px 40px;
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 18px 45px;
             font-size: 0.9rem;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             cursor: pointer;
             text-transform: uppercase;
             border-radius: 50px;
-            box-shadow: 0 0 20px var(--glow-color);
+            transition: 0.4s;
             font-weight: bold;
+            flex-shrink: 0; /* Evita que el botón se encoja */
         }
 
-        /* Reproductor Pequeño para evitar bloqueos */
-        #player-wrapper {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            width: 150px;
-            height: 90px;
-            z-index: 500;
-            opacity: 0.1; /* Casi invisible pero presente */
-            pointer-events: none;
-        }
+        #start-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 15px var(--glow-color); }
+
+        /* Reproductor oculto */
+        #player-wrapper { position: fixed; top: -500px; left: -500px; width: 1px; height: 1px; pointer-events: none; }
 
         #canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
 
@@ -84,53 +92,63 @@
             width: 100%;
             max-width: 650px;
             margin: 0 auto;
-            padding: 100px 25px 500px 25px;
+            padding: 120px 25px 600px 25px; /* Padding extra para el final solo en pantalla */
             text-align: center;
             display: none;
         }
 
         h1 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(1.8rem, 8vw, 2.6rem);
-            margin-bottom: 150px;
+            font-size: clamp(2rem, 9vw, 3rem);
+            margin-bottom: 180px;
             color: #fff;
         }
 
-        .stanza { margin-bottom: 180px; }
+        .stanza { margin-bottom: 220px; }
 
         .stanza span {
             display: block;
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 20px;
-            font-size: clamp(1.1rem, 5vw, 1.3rem);
+            transform: translateY(30px);
+            transition: all 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 25px;
+            font-size: clamp(1.2rem, 5.5vw, 1.45rem);
         }
 
         .revealed { opacity: 1 !important; transform: translateY(0) !important; }
 
         .sacrifice-verse {
-            border: 1px solid rgba(192, 132, 252, 0.2);
-            padding: 40px 20px;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(192, 132, 252, 0.15);
+            padding: 50px 25px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.01);
         }
 
-        .highlight { color: var(--accent-color); }
+        .highlight { color: var(--accent-color); font-weight: 400; }
 
         footer {
-            margin-top: 100px;
-            font-size: 0.7rem;
-            opacity: 0.4;
-            letter-spacing: 4px;
+            margin-top: 200px;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            letter-spacing: 6px;
+            color: var(--accent-color);
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <div class="intro-text-start">
-            "Esto es lo que guardo en el pecho. No me marcho por falta de amor ni por deseo propio, sino porque respeto tu espacio y tu petición. Pero quiero que sepas que no pongo llave a este refugio; si algún día decides que el tiempo es propicio, mi puerta sigue abierta para ti, te esperaré."
+        <div class="intro-text-wrapper">
+            <div class="intro-dedication">
+                Te dedico esta carta. Léela cada vez que me extrañes...<br>
+                Y si decides volver, ven lista, con las manos vacías;<br>
+                porque la próxima vez tendrás mucho que cargar, mucho que construir,<br>
+                y las necesitarás disponibles.
+            </div>
+            <div class="intro-core-message">
+                "Esto es lo que guardo en el pecho. No me marcho por falta de amor ni por deseo propio, sino porque respeto tu espacio y tu petición. Pero quiero que sepas que no pongo llave a este refugio; si algún día decides que el tiempo es propicio, mi puerta sigue abierta para ti, te esperaré."
+            </div>
         </div>
         <button id="start-btn">Entrar al Refugio</button>
     </div>
@@ -138,8 +156,7 @@
     <div id="player-wrapper">
         <iframe id="video-frame" 
                 src="https://www.youtube.com/embed/FoCG-WNsZio?enablejsapi=1&autoplay=0&controls=0" 
-                frameborder="0" 
-                allow="autoplay"></iframe>
+                frameborder="0"></iframe>
     </div>
 
     <canvas id="canvas"></canvas>
@@ -184,23 +201,23 @@
 
         <div class="stanza sacrifice-verse">
             <span>Me dolerá imaginarte buscando otros abrazos,</span>
-            <span>pero respetaré tu paso si él te ofrece su abrigo;</span>
-            <span>acéptalo solo si ríe de tus chistes,</span>
-            <span>y si escucha tu sueño hasta unir los pedazos.</span>
+            <span>pero respetaré tu paso si él te ofrece su abrigo;<br></span>
+            <span>acéptalo solo si ríe de tus chistes conmigo,</span>
+            <span>y si escucha tu sueño hasta unir los pedazos.</span><br>
             <span>Si cumple tus caprichos y antojos de comida,</span>
             <span>si te cuida en la sombra como yo te cuidé...</span>
-            <span>la envidia me comerá, pero feliz te veré,</span>
+            <span>la envidia me comerá, pero feliz te veré,<br></span>
             <span>porque tu bienestar es el norte de mi vida.</span>
         </div>
 
-        <div class="stanza" style="border-top: 1px solid var(--accent-color); padding-top: 60px; color: var(--accent-color); font-weight: bold;">
+        <div class="stanza" id="final-verse" style="border-top: 1px solid var(--accent-color); padding-top: 80px; color: var(--accent-color);">
             <span>Pero si decides que nuestro mundo se detenga,</span>
             <span>y que este instante se quede para siempre con nosotros,</span>
-            <span>aquí estaré yo, sin buscar otros rostros,</span>
+            <span>aquí estaré yo, sin buscar otros rostros,<br></span>
             <span>esperando el momento en que el destino te traiga.</span>
         </div>
 
-        <footer>~ LA PUERTA SIGUE ABIERTA ~</footer>
+        <footer id="footer-trigger">~ LA PUERTA SIGUE ABIERTA ~</footer>
     </div>
 
     <script>
@@ -208,54 +225,66 @@
         const overlay = document.getElementById('overlay');
         const container = document.getElementById('main-content');
         const videoFrame = document.getElementById('video-frame');
+        let musicStopped = false;
 
         startBtn.addEventListener('click', () => {
-            // Mandar comando de PLAY al iframe de YouTube
+            // Iniciar música de forma forzada tras el click
             videoFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
             
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
                 container.style.display = 'block';
-                // Iniciar aparición de frases y scroll
-                initAnimations();
-            }, 1000);
+                initExperience();
+            }, 2000); // Tiempo para el fundido a negro
         });
 
-        function initAnimations() {
-            // Observer para las frases
+        function initExperience() {
+            // Observer para revelar frases frase por frase
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('revealed');
+                        
+                        // DETENER MÚSICA SI LLEGAMOS AL FINAL (FOOTER)
+                        if (entry.target.id === 'footer-trigger' && !musicStopped) {
+                            videoFrame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                            musicStopped = true;
+                        }
                     }
                 });
-            }, { threshold: 0.5 });
+            }, { threshold: 0.1 });
 
-            document.querySelectorAll('.stanza span, h1').forEach(el => observer.observe(el));
+            document.querySelectorAll('.stanza span, h1, footer').forEach(el => observer.observe(el));
 
-            // Scroll automático suave
-            let scrollPos = 0;
+            // Scroll automático muy lento y cinematográfico
+            let scrollPos = window.scrollY;
             function autoScroll() {
-                scrollPos += 0.5; // Velocidad de lectura
+                // Si la música paró, el scroll puede detenerse un poquito después
+                if (musicStopped && (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 50)) {
+                   return; // Parar el loop de scroll
+                }
+                
+                scrollPos += 0.45; // Velocidad de lectura pausada
                 window.scrollTo(0, scrollPos);
-                if (scrollPos < document.body.scrollHeight) {
+                
+                if (scrollPos < (document.body.scrollHeight - window.innerHeight)) {
                     requestAnimationFrame(autoScroll);
                 }
             }
-            // Pequeña pausa antes de empezar a bajar
-            setTimeout(autoScroll, 3000);
+            // Pequeña pausa dramática antes de empezar a bajar automáticamente
+            setTimeout(autoScroll, 4000);
         }
 
-        // Canvas de fondo
+        // Fondo animado de red digital suave
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let points = [];
         function initCanvas() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             points = [];
-            for(let i=0; i<30; i++) {
-                points.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3 });
+            for(let i=0; i<35; i++) {
+                points.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.25, vy: (Math.random()-0.5)*0.25 });
             }
         }
         window.addEventListener('resize', initCanvas);
@@ -267,10 +296,10 @@
             points.forEach((p, i) => {
                 p.x += p.vx; p.y += p.vy;
                 if(p.x<0 || p.x>canvas.width) p.vx*=-1; if(p.y<0 || p.y>canvas.height) p.vy*=-1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
                 for(let j=i+1; j<points.length; j++){
                     let d = Math.hypot(p.x-points[j].x, p.y-points[j].y);
-                    if(d<150){ ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke(); }
+                    if(d<160){ ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke(); }
                 }
             });
             requestAnimationFrame(draw);
