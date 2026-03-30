@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>El Guardián de tu Ausencia</title>
+    
+    <title>Un espacio para ti</title>
+    <meta name="description" content="Haz clic para entrar">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Un espacio para ti">
+    <meta property="og:description" content="Haz clic para descubrirlo">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630/030408/c084fc?text=%F0%9F%94%91"> <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Un espacio para ti">
+    <meta name="twitter:description" content="Haz clic para descubrirlo">
+
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --bg-color: #030408;
@@ -233,14 +244,13 @@
 
             let scrollY = 0;
             function step() {
-                // Velocidad aumentada a 0.58 para sincronizar con el fin del audio a los 2:21
+                // Velocidad 0.58 sincronizada para finalizar a los 2:21
                 scrollY += 0.58; 
                 window.scrollTo(0, scrollY);
                 if (scrollY < (document.body.scrollHeight - window.innerHeight)) {
                     requestAnimationFrame(step);
                 }
             }
-            // Pausa inicial de 4 segundos para leer el título
             setTimeout(step, 4000);
         }
 
