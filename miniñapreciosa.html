@@ -24,7 +24,7 @@
             line-height: 2.2;
         }
 
-        /* Pantalla de Inicio - REFORZADA */
+        /* Pantalla de Inicio */
         #overlay {
             position: fixed;
             top: 0; left: 0;
@@ -38,7 +38,7 @@
             text-align: center;
             padding: 40px;
             transition: opacity 2s ease;
-            overflow-y: auto; /* Permite scroll si el texto es largo en pantallas pequeñas */
+            overflow-y: auto;
         }
 
         .intro-text-wrapper {
@@ -47,23 +47,15 @@
             text-align: left;
             border-left: 2px solid var(--accent-color);
             padding-left: 25px;
-        }
-
-        .intro-dedication {
-            font-family: 'Playfair Display', serif;
-            color: #fff;
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-            font-style: italic;
-            line-height: 1.5;
-        }
-
-        .intro-core-message {
-            font-style: italic;
+            /* Estilo solicitado: Morado y Cursiva */
             color: var(--accent-color);
-            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        .intro-message {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
             line-height: 1.8;
-            opacity: 1;
         }
 
         #start-btn {
@@ -78,21 +70,19 @@
             border-radius: 50px;
             transition: 0.4s;
             font-weight: bold;
-            flex-shrink: 0; /* Evita que el botón se encoja */
+            flex-shrink: 0;
         }
 
         #start-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 15px var(--glow-color); }
 
-        /* Reproductor oculto */
         #player-wrapper { position: fixed; top: -500px; left: -500px; width: 1px; height: 1px; pointer-events: none; }
-
         #canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
 
         .container {
             width: 100%;
             max-width: 650px;
             margin: 0 auto;
-            padding: 120px 25px 600px 25px; /* Padding extra para el final solo en pantalla */
+            padding: 120px 25px 600px 25px;
             text-align: center;
             display: none;
         }
@@ -140,14 +130,10 @@
 
     <div id="overlay">
         <div class="intro-text-wrapper">
-            <div class="intro-dedication">
-                Te dedico esta carta. Léela cada vez que me extrañes...<br>
-                Y si decides volver, ven lista, con las manos vacías;<br>
-                porque la próxima vez tendrás mucho que cargar, mucho que construir,<br>
-                y las necesitarás disponibles.
-            </div>
-            <div class="intro-core-message">
-                "Esto es lo que guardo en el pecho. No me marcho por falta de amor ni por deseo propio, sino porque respeto tu espacio y tu petición. Pero quiero que sepas que no pongo llave a este refugio; si algún día decides que el tiempo es propicio,sabes donde estoy, te esperaré."
+            <div class="intro-message">
+                Te dedico esta carta. Léela cada vez que me extrañes…<br><br>
+                Y si algún día decides volver, ven con el corazón abierto y las manos libres, porque entonces habrá mucho que compartir, mucho que construir juntos, y necesitarás toda tu fuerza para abrazar lo que nos espera.<br><br>
+                Esto es lo que guardo en el pecho: no me marcho por falta de amor ni por deseo propio, sino porque respeto tu espacio y tu petición. Pero quiero que sepas que este refugio no tiene llave; si algún día sientes que el tiempo es propicio, sabes dónde estoy… y aquí te esperaré.
             </div>
         </div>
         <button id="start-btn">Entrar al Refugio</button>
@@ -201,19 +187,19 @@
 
         <div class="stanza sacrifice-verse">
             <span>Me dolerá imaginarte buscando otros abrazos,</span>
-            <span>pero respetaré tu paso si él te ofrece su abrigo;<br></span>
+            <span>pero respetaré tu paso si él te ofrece su abrigo;</span>
             <span>acéptalo solo si ríe de tus chistes conmigo,</span>
             <span>y si escucha tu sueño hasta unir los pedazos.</span><br>
             <span>Si cumple tus caprichos y antojos de comida,</span>
             <span>si te cuida en la sombra como yo te cuidé...</span>
-            <span>la envidia me comerá, pero feliz te veré,<br></span>
+            <span>la envidia me comerá, pero feliz te veré,</span>
             <span>porque tu bienestar es el norte de mi vida.</span>
         </div>
 
         <div class="stanza" id="final-verse" style="border-top: 1px solid var(--accent-color); padding-top: 80px; color: var(--accent-color);">
             <span>Pero si decides que nuestro mundo se detenga,</span>
             <span>y que este instante se quede para siempre con nosotros,</span>
-            <span>aquí estaré yo, sin buscar otros rostros,<br></span>
+            <span>aquí estaré yo, sin buscar otros rostros,</span>
             <span>esperando el momento en que el destino te traiga.</span>
         </div>
 
@@ -228,25 +214,20 @@
         let musicStopped = false;
 
         startBtn.addEventListener('click', () => {
-            // Iniciar música de forma forzada tras el click
             videoFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-            
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
                 container.style.display = 'block';
                 initExperience();
-            }, 2000); // Tiempo para el fundido a negro
+            }, 2000);
         });
 
         function initExperience() {
-            // Observer para revelar frases frase por frase
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('revealed');
-                        
-                        // DETENER MÚSICA SI LLEGAMOS AL FINAL (FOOTER)
                         if (entry.target.id === 'footer-trigger' && !musicStopped) {
                             videoFrame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                             musicStopped = true;
@@ -257,26 +238,18 @@
 
             document.querySelectorAll('.stanza span, h1, footer').forEach(el => observer.observe(el));
 
-            // Scroll automático muy lento y cinematográfico
             let scrollPos = window.scrollY;
             function autoScroll() {
-                // Si la música paró, el scroll puede detenerse un poquito después
-                if (musicStopped && (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 50)) {
-                   return; // Parar el loop de scroll
-                }
-                
-                scrollPos += 0.45; // Velocidad de lectura pausada
+                if (musicStopped && (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 50)) return;
+                scrollPos += 0.45; 
                 window.scrollTo(0, scrollPos);
-                
                 if (scrollPos < (document.body.scrollHeight - window.innerHeight)) {
                     requestAnimationFrame(autoScroll);
                 }
             }
-            // Pequeña pausa dramática antes de empezar a bajar automáticamente
             setTimeout(autoScroll, 4000);
         }
 
-        // Fondo animado de red digital suave
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let points = [];
