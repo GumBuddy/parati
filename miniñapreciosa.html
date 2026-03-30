@@ -21,7 +21,7 @@
             font-family: 'Inter', sans-serif;
             margin: 0; padding: 0;
             overflow-x: hidden;
-            line-height: 1.8;
+            line-height: 1.9;
         }
 
         #overlay {
@@ -48,12 +48,11 @@
             cursor: pointer;
             text-transform: uppercase;
             margin-top: 20px;
-            transition: 0.3s;
+            border-radius: 50px;
         }
 
-        #start-btn:hover { background: var(--accent-color); color: white; }
-
-        #youtube-player { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+        /* Reproductor invisible pero activo */
+        #youtube-player { position: fixed; top: -100px; left: -100px; width: 1px; height: 1px; pointer-events: none; }
 
         #canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.4; }
 
@@ -61,7 +60,7 @@
             width: 100%;
             max-width: 650px;
             margin: 0 auto;
-            padding: 80px 25px;
+            padding: 100px 25px 200px 25px;
             text-align: center;
             display: none;
         }
@@ -71,64 +70,59 @@
             color: var(--accent-color);
             border-left: 2px solid var(--accent-color);
             padding: 25px;
-            margin-bottom: 80px;
-            font-size: 1.1rem;
+            margin-bottom: 120px;
+            font-size: 1.15rem;
             text-align: left;
             background: rgba(192, 132, 252, 0.05);
             opacity: 0;
-            transform: translateX(-20px);
             transition: all 2s ease;
         }
 
         h1 {
             font-family: 'Playfair Display', serif;
             font-size: clamp(1.8rem, 8vw, 2.5rem);
-            margin-bottom: 60px;
+            margin-bottom: 100px;
             opacity: 0;
-            transition: 3.5s ease;
+            transition: 3s ease;
         }
 
         .stanza {
-            margin-bottom: 85px;
+            margin-bottom: 120px;
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 1.8s ease-out;
-            font-size: clamp(1.05rem, 4.8vw, 1.2rem);
+            transform: translateY(40px);
+            transition: all 2s ease-out;
+            font-size: clamp(1.1rem, 5vw, 1.3rem);
         }
 
         .visible { opacity: 1 !important; transform: translate(0) !important; }
 
         .sacrifice-verse {
             border: 1px solid rgba(192, 132, 252, 0.2);
-            padding: 35px 20px;
-            border-radius: 12px;
+            padding: 40px 25px;
+            border-radius: 15px;
             background: rgba(255, 255, 255, 0.02);
             font-style: italic;
         }
 
-        .highlight { color: var(--accent-color); font-weight: 400; }
+        .highlight { color: var(--accent-color); }
 
         footer {
-            margin-top: 60px;
+            margin-top: 100px;
             font-size: 0.7rem;
             opacity: 0.4;
-            letter-spacing: 4px;
-            padding-bottom: 60px;
+            letter-spacing: 5px;
         }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <p style="font-weight: 200; letter-spacing: 1px; padding: 0 40px; color: #a5b4fc;">Sube el volumen y deja que la música te guíe.</p>
-        <button id="start-btn">Entrar al Refugio</button>
+        <p style="font-weight: 200; letter-spacing: 1px; color: #a5b4fc; padding: 0 30px;">Sube el volumen.<br>Deja que las palabras fluyan solas.</p>
+        <button id="start-btn">Comenzar lectura</button>
     </div>
 
     <div id="youtube-player">
-        <iframe id="video-frame" 
-                src="https://www.youtube.com/embed/FoCG-WNsZio?enablejsapi=1" 
-                allow="autoplay">
-        </iframe>
+        <div id="player"></div>
     </div>
 
     <canvas id="canvas"></canvas>
@@ -186,7 +180,7 @@
             porque tu bienestar es el norte de mi vida.
         </div>
 
-        <div class="stanza" style="border-top: 1px solid var(--accent-color); padding-top: 40px; color: var(--accent-color); font-weight: bold;">
+        <div class="stanza" style="border-top: 1px solid var(--accent-color); padding-top: 50px; color: var(--accent-color); font-weight: bold;">
             Pero si decides que nuestro mundo se detenga,<br>
             y que este instante se quede para siempre con nosotros,<br>
             aquí estaré yo, sin buscar otros rostros,<br>
@@ -197,21 +191,57 @@
     </div>
 
     <script>
+        // Cargar API de YouTube
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '1', width: '1',
+                videoId: '4Tr0nKuay6w', // Moonlight Sonata (puedes cambiarlo a FoCG-WNsZio para Mariage)
+                playerVars: { 'autoplay': 1, 'controls': 0, 'showinfo': 0, 'rel': 0, 'enablejsapi': 1 },
+                events: { 'onReady': onPlayerReady }
+            });
+        }
+
+        function onPlayerReady(event) {
+            // El reproductor está listo
+        }
+
         const startBtn = document.getElementById('start-btn');
         const overlay = document.getElementById('overlay');
         const container = document.getElementById('main-content');
 
         startBtn.addEventListener('click', () => {
             overlay.style.opacity = '0';
-            document.getElementById('video-frame').contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            player.playVideo(); // Iniciar música
+            
             setTimeout(() => {
                 overlay.style.display = 'none';
                 container.style.display = 'block';
                 document.getElementById('intro-text').classList.add('visible');
                 document.querySelector('h1').classList.add('visible');
+                
+                // Iniciar Scroll Automático después de 6 segundos (para leer la intro)
+                setTimeout(startAutoScroll, 6000);
             }, 1000);
         });
 
+        function startAutoScroll() {
+            const scrollSpeed = 0.5; // Ajusta este número (más bajo = más lento)
+            function scroll() {
+                window.scrollBy(0, scrollSpeed);
+                if ((window.innerHeight + window.scrollY) < document.body.offsetHeight) {
+                    requestAnimationFrame(scroll);
+                }
+            }
+            requestAnimationFrame(scroll);
+        }
+
+        // Observer para efectos visuales
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -220,21 +250,22 @@
 
         document.querySelectorAll('.stanza').forEach(el => observer.observe(el));
 
+        // Animación de partículas
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let points = [];
         function init() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             points = [];
-            for(let i=0; i<45; i++) {
-                points.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 });
+            for(let i=0; i<40; i++) {
+                points.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4 });
             }
         }
         window.addEventListener('resize', init);
         init();
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "rgba(192, 132, 252, 0.3)";
+            ctx.fillStyle = "rgba(192, 132, 252, 0.4)";
             ctx.strokeStyle = "rgba(192, 132, 252, 0.08)";
             points.forEach((p, i) => {
                 p.x += p.vx; p.y += p.vy;
@@ -242,7 +273,7 @@
                 ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
                 for(let j=i+1; j<points.length; j++){
                     let d = Math.hypot(p.x-points[j].x, p.y-points[j].y);
-                    if(d<140){ ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke(); }
+                    if(d<150){ ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke(); }
                 }
             });
             requestAnimationFrame(draw);
