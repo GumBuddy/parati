@@ -10,7 +10,7 @@
             --bg-color: #030408;
             --text-color: #f1f5f9;
             --accent-color: #c084fc; 
-            --glow-color: rgba(192, 132, 252, 0.2);
+            --glow-color: rgba(192, 132, 252, 0.4);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -47,7 +47,6 @@
             text-align: left;
             border-left: 2px solid var(--accent-color);
             padding-left: 25px;
-            /* Estilo solicitado: Morado y Cursiva */
             color: var(--accent-color);
             font-style: italic;
         }
@@ -70,19 +69,21 @@
             border-radius: 50px;
             transition: 0.4s;
             font-weight: bold;
-            flex-shrink: 0;
         }
 
         #start-btn:hover { background: var(--accent-color); color: white; box-shadow: 0 0 15px var(--glow-color); }
 
+        /* Reproductor invisible pero activo */
         #player-wrapper { position: fixed; top: -500px; left: -500px; width: 1px; height: 1px; pointer-events: none; }
-        #canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+
+        /* Fondo de Estrellas/Partículas */
+        #canvas { position: fixed; top: 0; left: 0; z-index: -1; }
 
         .container {
             width: 100%;
             max-width: 650px;
             margin: 0 auto;
-            padding: 120px 25px 600px 25px;
+            padding: 150px 25px 600px 25px;
             text-align: center;
             display: none;
         }
@@ -92,14 +93,17 @@
             font-size: clamp(2rem, 9vw, 3rem);
             margin-bottom: 180px;
             color: #fff;
+            opacity: 0;
+            transition: 3s ease;
         }
 
         .stanza { margin-bottom: 220px; }
 
+        /* Estilo para que las frases aparezcan suavemente */
         .stanza span {
             display: block;
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
             transition: all 2.5s cubic-bezier(0.4, 0, 0.2, 1);
             margin-bottom: 25px;
             font-size: clamp(1.2rem, 5.5vw, 1.45rem);
@@ -108,10 +112,10 @@
         .revealed { opacity: 1 !important; transform: translateY(0) !important; }
 
         .sacrifice-verse {
-            border: 1px solid rgba(192, 132, 252, 0.15);
+            border: 1px solid rgba(192, 132, 252, 0.3);
             padding: 50px 25px;
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.01);
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .highlight { color: var(--accent-color); font-weight: 400; }
@@ -119,10 +123,11 @@
         footer {
             margin-top: 200px;
             font-size: 0.8rem;
-            opacity: 0.6;
+            opacity: 0;
             letter-spacing: 6px;
             color: var(--accent-color);
             font-weight: bold;
+            transition: opacity 3s;
         }
     </style>
 </head>
@@ -140,15 +145,13 @@
     </div>
 
     <div id="player-wrapper">
-        <iframe id="video-frame" 
-                src="https://www.youtube.com/embed/FoCG-WNsZio?enablejsapi=1&autoplay=0&controls=0" 
-                frameborder="0"></iframe>
+        <div id="player"></div>
     </div>
 
     <canvas id="canvas"></canvas>
 
     <div class="container" id="main-content">
-        <h1>El Guardián de tu Ausencia</h1>
+        <h1 id="title">El Guardián de tu Ausencia</h1>
 
         <div class="stanza">
             <span>Me sumerjo en el silencio para cuidar tu calma,</span>
@@ -206,73 +209,107 @@
         <footer id="footer-trigger">~ LA PUERTA SIGUE ABIERTA ~</footer>
     </div>
 
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+        var player;
+        var musicStopped = false;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '0', width: '0',
+                videoId: 'FoCG-WNsZio',
+                playerVars: { 'autoplay': 0, 'controls': 0, 'showinfo': 0, 'loop': 1, 'playlist': 'FoCG-WNsZio' },
+                events: { 'onReady': function(event) { event.target.setVolume(100); } }
+            });
+        }
+
         const startBtn = document.getElementById('start-btn');
         const overlay = document.getElementById('overlay');
         const container = document.getElementById('main-content');
-        const videoFrame = document.getElementById('video-frame');
-        let musicStopped = false;
 
         startBtn.addEventListener('click', () => {
-            videoFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            if(player && player.playVideo) player.playVideo();
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
                 container.style.display = 'block';
+                document.getElementById('title').classList.add('visible');
                 initExperience();
             }, 2000);
         });
 
         function initExperience() {
+            // Observer para aparición suave de frases
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('revealed');
                         if (entry.target.id === 'footer-trigger' && !musicStopped) {
-                            videoFrame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                            if(player && player.pauseVideo) player.pauseVideo();
                             musicStopped = true;
+                            entry.target.style.opacity = "1";
                         }
                     }
                 });
             }, { threshold: 0.1 });
 
-            document.querySelectorAll('.stanza span, h1, footer').forEach(el => observer.observe(el));
+            document.querySelectorAll('.stanza span, #title, footer').forEach(el => observer.observe(el));
 
-            let scrollPos = window.scrollY;
+            // Scroll automático
+            let scrollPos = 0;
             function autoScroll() {
-                if (musicStopped && (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 50)) return;
+                if (musicStopped) return;
                 scrollPos += 0.45; 
                 window.scrollTo(0, scrollPos);
-                if (scrollPos < (document.body.scrollHeight - window.innerHeight)) {
-                    requestAnimationFrame(autoScroll);
-                }
+                requestAnimationFrame(autoScroll);
             }
             setTimeout(autoScroll, 4000);
         }
 
+        // Canvas de Estrellas Mejorado
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let points = [];
+
         function initCanvas() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
             points = [];
-            for(let i=0; i<35; i++) {
-                points.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.25, vy: (Math.random()-0.5)*0.25 });
+            for(let i=0; i<60; i++) { // Más estrellas
+                points.push({
+                    x: Math.random()*canvas.width,
+                    y: Math.random()*canvas.height,
+                    vx: (Math.random()-0.5)*0.3,
+                    vy: (Math.random()-0.5)*0.3,
+                    r: Math.random()*1.8 + 0.5 // Estrellas más visibles
+                });
             }
         }
+
         window.addEventListener('resize', initCanvas);
         initCanvas();
+
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "rgba(192, 132, 252, 0.4)";
-            ctx.strokeStyle = "rgba(192, 132, 252, 0.05)";
             points.forEach((p, i) => {
                 p.x += p.vx; p.y += p.vy;
-                if(p.x<0 || p.x>canvas.width) p.vx*=-1; if(p.y<0 || p.y>canvas.height) p.vy*=-1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2); ctx.fill();
+                if(p.x<0 || p.x>canvas.width) p.vx*=-1;
+                if(p.y<0 || p.y>canvas.height) p.vy*=-1;
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                ctx.fillStyle = "rgba(192, 132, 252, 0.7)"; // Morado más brillante
+                ctx.fill();
+
                 for(let j=i+1; j<points.length; j++){
                     let d = Math.hypot(p.x-points[j].x, p.y-points[j].y);
-                    if(d<160){ ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke(); }
+                    if(d<150){
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(points[j].x, points[j].y);
+                        ctx.strokeStyle = "rgba(192, 132, 252, 0.15)";
+                        ctx.stroke();
+                    }
                 }
             });
             requestAnimationFrame(draw);
