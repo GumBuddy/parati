@@ -201,9 +201,7 @@
         const content = document.getElementById('main-content');
 
         startBtn.addEventListener('click', () => {
-            // Reproducir audio local
             audio.play();
-            
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
@@ -212,11 +210,10 @@
             }, 1500);
         });
 
-        // Monitor para detener el audio en 2:21 (141 segundos)
         audio.addEventListener('timeupdate', () => {
             if (audio.currentTime >= 141) {
                 audio.pause();
-                audio.currentTime = 141; // Mantener en ese punto
+                audio.currentTime = 141; 
             }
         });
 
@@ -234,19 +231,19 @@
 
             document.querySelectorAll('.stanza span, h1, footer').forEach(el => observer.observe(el));
 
-            // Scroll automático independiente
             let scrollY = 0;
             function step() {
-                scrollY += 0.42; // Velocidad ligeramente ajustada para la nueva duración
+                // Velocidad aumentada a 0.58 para sincronizar con el fin del audio a los 2:21
+                scrollY += 0.58; 
                 window.scrollTo(0, scrollY);
                 if (scrollY < (document.body.scrollHeight - window.innerHeight)) {
                     requestAnimationFrame(step);
                 }
             }
+            // Pausa inicial de 4 segundos para leer el título
             setTimeout(step, 4000);
         }
 
-        // Estrellas de fondo con brillo morado
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
