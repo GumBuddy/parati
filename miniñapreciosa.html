@@ -21,129 +21,130 @@
             font-family: 'Inter', sans-serif;
             margin: 0; padding: 0;
             overflow-x: hidden;
-            line-height: 2; /* Mayor espaciado para la lectura */
-            scroll-behavior: smooth;
+            line-height: 2;
         }
 
-        /* Pantalla de Inicio */
+        /* Pantalla de Inicio - REFORZADA */
         #overlay {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: var(--bg-color);
-            z-index: 100;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
+            padding: 30px;
             transition: opacity 1.5s ease;
         }
 
-        #start-btn {
-            background: none;
-            border: 1px solid var(--accent-color);
+        .intro-text-start {
+            font-style: italic;
             color: var(--accent-color);
-            padding: 15px 40px;
-            font-size: 0.9rem;
-            letter-spacing: 4px;
-            cursor: pointer;
-            text-transform: uppercase;
-            margin-top: 25px;
-            border-radius: 50px;
-            box-shadow: 0 0 15px var(--glow-color);
-            transition: 0.3s;
+            max-width: 500px;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            border-left: 2px solid var(--accent-color);
+            padding-left: 15px;
+            text-align: left;
         }
 
-        #start-btn:hover { background: var(--accent-color); color: white; }
+        #start-btn {
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            padding: 18px 40px;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-radius: 50px;
+            box-shadow: 0 0 20px var(--glow-color);
+            font-weight: bold;
+        }
 
-        /* Reproductor invisible */
-        #player-container { position: fixed; top: -500px; left: -500px; }
+        /* Reproductor Pequeño para evitar bloqueos */
+        #player-wrapper {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 150px;
+            height: 90px;
+            z-index: 500;
+            opacity: 0.1; /* Casi invisible pero presente */
+            pointer-events: none;
+        }
 
-        #canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.35; }
+        #canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
 
         .container {
             width: 100%;
             max-width: 650px;
             margin: 0 auto;
-            padding: 120px 25px 400px 25px; /* Mucho padding inferior para el scroll final */
+            padding: 100px 25px 500px 25px;
             text-align: center;
             display: none;
-        }
-
-        .intro-box {
-            font-style: italic;
-            color: var(--accent-color);
-            border-left: 2px solid var(--accent-color);
-            padding: 25px;
-            margin-bottom: 180px;
-            font-size: 1.15rem;
-            text-align: left;
-            background: rgba(192, 132, 252, 0.05);
-            opacity: 0;
-            transition: all 2s ease;
         }
 
         h1 {
             font-family: 'Playfair Display', serif;
             font-size: clamp(1.8rem, 8vw, 2.6rem);
             margin-bottom: 150px;
-            opacity: 0;
-            transition: 3.5s ease;
+            color: #fff;
         }
 
-        .stanza {
-            margin-bottom: 180px; /* Espaciado entre estrofas */
-            font-size: clamp(1.15rem, 5vw, 1.35rem);
-        }
+        .stanza { margin-bottom: 180px; }
 
-        /* Efecto de desvanecimiento por frase */
         .stanza span {
-            display: block; /* Cada frase es un bloque */
+            display: block;
             opacity: 0;
-            transform: translateY(15px);
-            transition: all 1.8s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 15px; /* Espaciado entre frases */
+            transform: translateY(20px);
+            transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 20px;
+            font-size: clamp(1.1rem, 5vw, 1.3rem);
         }
 
-        .stanza.sacrifice-verse span { margin-bottom: 20px; font-style: italic; }
+        .revealed { opacity: 1 !important; transform: translateY(0) !important; }
 
-        /* Clase activada por el Observer */
-        .stanza span.revealed {
-            opacity: 1;
-            transform: translateY(0);
+        .sacrifice-verse {
+            border: 1px solid rgba(192, 132, 252, 0.2);
+            padding: 40px 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .highlight { color: var(--accent-color); }
 
         footer {
-            margin-top: 150px;
-            font-size: 0.75rem;
+            margin-top: 100px;
+            font-size: 0.7rem;
             opacity: 0.4;
-            letter-spacing: 5px;
-            text-transform: uppercase;
+            letter-spacing: 4px;
         }
     </style>
 </head>
 <body>
 
     <div id="overlay">
-        <p style="font-weight: 200; letter-spacing: 1px; color: #a5b4fc; padding: 0 40px; margin-bottom: 15px;">Sube el volumen y déjate llevar.</p>
-        <p style="font-weight: 300; letter-spacing: 1px; color: #fff; margin-bottom: 30px;">"No puedo odiarte ni dejarte de amar, así que te dedico esta carta."</p>
-        <button id="start-btn">Comenzar lectura</button>
+        <div class="intro-text-start">
+            "Esto es lo que guardo en el pecho. No me marcho por falta de amor ni por deseo propio, sino porque respeto tu espacio y tu petición. Pero quiero que sepas que no pongo llave a este refugio; si algún día decides que el tiempo es propicio, mi puerta sigue abierta para ti, te esperaré."
+        </div>
+        <button id="start-btn">Entrar al Refugio</button>
     </div>
 
-    <div id="player-container">
-        <div id="player"></div>
+    <div id="player-wrapper">
+        <iframe id="video-frame" 
+                src="https://www.youtube.com/embed/FoCG-WNsZio?enablejsapi=1&autoplay=0&controls=0" 
+                frameborder="0" 
+                allow="autoplay"></iframe>
     </div>
 
     <canvas id="canvas"></canvas>
 
     <div class="container" id="main-content">
-        <div class="intro-box" id="intro-text">
-            "Esto es lo que guardo en el pecho. No me marcho por falta de amor ni por deseo propio, sino porque respeto tu espacio y tu petición. Pero quiero que sepas que no pongo llave a este refugio; si algún día decides que el tiempo es propicio, mi puerta sigue abierta para ti, te esperaré."
-        </div>
-
         <h1>El Guardián de tu Ausencia</h1>
 
         <div class="stanza">
@@ -182,7 +183,7 @@
         </div>
 
         <div class="stanza sacrifice-verse">
-            <span style="border: 1px solid var(--accent-color); padding: 10px; border-radius: 8px;">Me dolerá imaginarte buscando otros abrazos,</span>
+            <span>Me dolerá imaginarte buscando otros abrazos,</span>
             <span>pero respetaré tu paso si él te ofrece su abrigo;</span>
             <span>acéptalo solo si ríe de tus chistes,</span>
             <span>y si escucha tu sueño hasta unir los pedazos.</span>
@@ -199,108 +200,77 @@
             <span>esperando el momento en que el destino te traiga.</span>
         </div>
 
-        <footer>~ Unidos en el sueño ~</footer>
+        <footer>~ LA PUERTA SIGUE ABIERTA ~</footer>
     </div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '0', width: '0',
-                videoId: 'FoCG-WNsZio', // Link solicitado
-                playerVars: {
-                    'autoplay': 1, 'controls': 0, 'showinfo': 0,
-                    'modestbranding': 1, 'loop': 1, 'playlist': 'FoCG-WNsZio'
-                },
-                events: {
-                    'onReady': function(event) {
-                        event.target.setVolume(100);
-                    }
-                }
-            });
-        }
-
         const startBtn = document.getElementById('start-btn');
         const overlay = document.getElementById('overlay');
         const container = document.getElementById('main-content');
+        const videoFrame = document.getElementById('video-frame');
 
         startBtn.addEventListener('click', () => {
-            // Activar YouTube forzadamente al hacer click (para móviles)
-            if(player && player.playVideo) player.playVideo();
-
-            overlay.style.opacity = '0';
+            // Mandar comando de PLAY al iframe de YouTube
+            videoFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
             
+            overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
                 container.style.display = 'block';
-                document.getElementById('intro-text').classList.add('visible');
-                document.querySelector('h1').classList.add('visible');
-                
-                // Empezar scroll automático tras la intro (10 segundos para móviles)
-                setTimeout(startAutoScroll, 10000);
+                // Iniciar aparición de frases y scroll
+                initAnimations();
             }, 1000);
         });
 
-        // Función de Scroll Automático Cinematográfico
-        function startAutoScroll() {
-            let lastTime = 0;
-            // Velocidad optimizada para móviles (0.4 es muy lento y suave)
-            const scrollSpeed = 0.45; 
+        function initAnimations() {
+            // Observer para las frases
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                    }
+                });
+            }, { threshold: 0.5 });
 
-            function step(timestamp) {
-                if (!lastTime) lastTime = timestamp;
-                const progress = timestamp - lastTime;
-                window.scrollBy(0, scrollSpeed);
-                if ((window.innerHeight + window.scrollY) < document.body.offsetHeight) {
-                    requestAnimationFrame(step);
+            document.querySelectorAll('.stanza span, h1').forEach(el => observer.observe(el));
+
+            // Scroll automático suave
+            let scrollPos = 0;
+            function autoScroll() {
+                scrollPos += 0.5; // Velocidad de lectura
+                window.scrollTo(0, scrollPos);
+                if (scrollPos < document.body.scrollHeight) {
+                    requestAnimationFrame(autoScroll);
                 }
             }
-            requestAnimationFrame(step);
+            // Pequeña pausa antes de empezar a bajar
+            setTimeout(autoScroll, 3000);
         }
 
-        // Observer para controlar la aparición de CADA FRASE
-        const phraseObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                // Cuando el 30% de la frase sea visible en pantalla
-                if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
-                    entry.target.classList.add('revealed');
-                }
-            });
-        }, {
-            threshold: 0.3, // 30% visible para activar
-            rootMargin: '0px 0px -100px 0px' // Margen inferior para que aparezca "antes" de llegar
-        });
-
-        // Aplicar Observer a cada SPAN (cada frase)
-        document.querySelectorAll('.stanza span').forEach(el => {
-            phraseObserver.observe(el);
-        });
-
-        // Fondo de red digital (Canvas)
+        // Canvas de fondo
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let points = [];
-        function init() {
+        function initCanvas() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             points = [];
-            for(let i=0; i<40; i++) {
-                points.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.25, vy: (Math.random()-0.5)*0.25 });
+            for(let i=0; i<30; i++) {
+                points.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3 });
             }
         }
-        window.addEventListener('resize', init);
-        init();
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
         function draw() {
             ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "rgba(192, 132, 252, 0.35)";
-            ctx.strokeStyle = "rgba(192, 132, 252, 0.06)";
+            ctx.fillStyle = "rgba(192, 132, 252, 0.4)";
+            ctx.strokeStyle = "rgba(192, 132, 252, 0.05)";
             points.forEach((p, i) => {
                 p.x += p.vx; p.y += p.vy;
                 if(p.x<0 || p.x>canvas.width) p.vx*=-1; if(p.y<0 || p.y>canvas.height) p.vy*=-1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.3, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fill();
                 for(let j=i+1; j<points.length; j++){
                     let d = Math.hypot(p.x-points[j].x, p.y-points[j].y);
-                    if(d<130){ ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke(); }
+                    if(d<150){ ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke(); }
                 }
             });
             requestAnimationFrame(draw);
